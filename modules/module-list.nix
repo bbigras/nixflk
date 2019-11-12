@@ -1,0 +1,3 @@
+[
+  ./system/local-machine.nix
+]
