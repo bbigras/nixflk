@@ -1,23 +1,13 @@
 { config, lib, pkgs, ... }:
 let
-  inherit (builtins)
-    toFile
-    readFile
-    ;
+  inherit (builtins) toFile readFile;
 
-  inherit (lib)
-    fileContents
-    mkForce
-    ;
-
+  inherit (lib) fileContents mkForce;
 
   name = "Timothy DeHerrera";
-in
-{
+in {
 
-  imports = [
-    ../../profiles/graphical
-  ];
+  imports = [ ../../profiles/graphical ];
 
   users.users.root.hashedPassword = fileContents ../../secrets/root;
 
@@ -26,14 +16,11 @@ in
     enableSSHSupport = true;
   };
 
-  environment.systemPackages = with pkgs; [
-    nrd-logo
-    pinentry_gnome
-  ];
+  environment.systemPackages = with pkgs; [ nrd-logo pinentry_gnome ];
 
   home-manager.users.nrd = {
     home = {
-      packages = mkForce [];
+      packages = mkForce [ ];
 
       file = {
         ".ec2-keys".source = ../../secrets/ec2;
@@ -116,9 +103,12 @@ in
         st = "status -sb";
 
         # logging
-        lg = "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
-        plog = "log --graph --pretty='format:%C(red)%d%C(reset) %C(yellow)%h%C(reset) %ar %C(green)%aN%C(reset) %s'";
-        tlog = "log --stat --since='1 Day Ago' --graph --pretty=oneline --abbrev-commit --date=relative";
+        lg =
+          "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
+        plog =
+          "log --graph --pretty='format:%C(red)%d%C(reset) %C(yellow)%h%C(reset) %ar %C(green)%aN%C(reset) %s'";
+        tlog =
+          "log --stat --since='1 Day Ago' --graph --pretty=oneline --abbrev-commit --date=relative";
         rank = "shortlog -sn --no-merges";
 
         # delete merged branches
@@ -138,35 +128,26 @@ in
       hashKnownHosts = true;
 
       matchBlocks = let
-        githubKey = toFile "github"
-          (readFile ../../secrets/github);
+        githubKey = toFile "github" (readFile ../../secrets/github);
 
-        gitlabKey = toFile "gitlab"
-          (readFile ../../secrets/gitlab);
-      in
-        {
-          github = {
-            host = "github.com";
-            identityFile = githubKey;
-            extraOptions = {
-              AddKeysToAgent = "yes";
-            };
-          };
-          gitlab = {
-            host = "gitlab.com";
-            identityFile = gitlabKey;
-            extraOptions = {
-              AddKeysToAgent = "yes";
-            };
-          };
-          "gitlab.company" = {
-            host = "gitlab.company.com";
-            identityFile = gitlabKey;
-            extraOptions = {
-              AddKeysToAgent = "yes";
-            };
-          };
+        gitlabKey = toFile "gitlab" (readFile ../../secrets/gitlab);
+      in {
+        github = {
+          host = "github.com";
+          identityFile = githubKey;
+          extraOptions = { AddKeysToAgent = "yes"; };
         };
+        gitlab = {
+          host = "gitlab.com";
+          identityFile = gitlabKey;
+          extraOptions = { AddKeysToAgent = "yes"; };
+        };
+        "gitlab.company" = {
+          host = "gitlab.company.com";
+          identityFile = gitlabKey;
+          extraOptions = { AddKeysToAgent = "yes"; };
+        };
+      };
     };
   };
 
@@ -177,12 +158,7 @@ in
     description = name;
     isNormalUser = true;
     hashedPassword = fileContents ../../secrets/nrd;
-    extraGroups = [
-      "wheel"
-      "input"
-      "networkmanager"
-      "adbusers"
-    ];
+    extraGroups = [ "wheel" "input" "networkmanager" "adbusers" ];
   };
 
   nixpkgs.overlays = let
@@ -197,6 +173,5 @@ in
         '';
       };
     };
-  in
-    [ overlay ];
+  in [ overlay ];
 }

@@ -1,8 +1,6 @@
 { lib, pkgs, ... }:
-let
-  inherit (builtins) readFile;
-in
-{
+let inherit (builtins) readFile;
+in {
   imports = [
     ../profiles/games
     ../profiles/misc
@@ -26,19 +24,12 @@ in
     fsType = "xfs";
   };
 
-  boot.initrd.availableKernelModules = [
-    "xhci_pci"
-    "ehci_pci"
-    "ahci"
-    "usbhid"
-    "sd_mod"
-  ];
+  boot.initrd.availableKernelModules =
+    [ "xhci_pci" "ehci_pci" "ahci" "usbhid" "sd_mod" ];
 
   boot.kernelModules = [ "kvm-intel" ];
 
-  environment.sessionVariables = {
-    LIBVA_DRIVER_NAME = "iHD";
-  };
+  environment.sessionVariables = { LIBVA_DRIVER_NAME = "iHD"; };
 
   hardware.cpu.intel.updateMicrocode = true;
 
@@ -49,9 +40,7 @@ in
     intel-media-driver
   ];
 
-  networking.networkmanager = {
-    enable = true;
-  };
+  networking.networkmanager = { enable = true; };
 
   nix.maxJobs = lib.mkDefault 4;
   nix.systemFeatures = [ "gccarch-haswell" ];
